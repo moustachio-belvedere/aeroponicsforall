@@ -1,5 +1,6 @@
 from managerServer import serverInit
 from managerHardware import Lights, Mister, Fan, Peltier
+from threading import Thread
 from os import walk, path
 import json
 
@@ -8,7 +9,8 @@ if __name__ == '__main__':
         # start server
         HOST_NAME = 'localhost'
         PORT_NUMBER = 8000
-        serverInit(HOST_NAME, PORT_NUMBER)
+        serverthread = Thread(target=serverinit, args=(HOST_NAME, PORT_NUMBER))
+        serverthread.start()
 
         # init lights
         lights = Lights("RELAY1")
@@ -25,6 +27,8 @@ if __name__ == '__main__':
         # init peltier
         peltier = Peltier("RELAY4")
     
+        serverthread.join()
+
     # try and switch things switch off if there are any errors or user shutdown
     except:
         try:
