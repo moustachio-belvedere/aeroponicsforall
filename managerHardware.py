@@ -10,7 +10,7 @@ class Lights(Relay):
 
     def inrangeON(self):
         timenow = datetime.datetime.now().time()
-        print("Light function ran at {}".format(timenow))
+        # print("Light function ran at {}".format(timenow))
         if time_in_range(self.ton, self.toff, timenow):
             if not self.ison:
                 self.on()
@@ -25,8 +25,8 @@ class Lights(Relay):
         self.ton = datetime.time(*ton)
         self.toff = datetime.time(*toff)
 
-        # every sixty seconds, check if in desired time window for lights on
-        self.lightschedule = IndefiniteTimer(2, self.inrangeON)
+        # every ten seconds, check if in desired time window for lights on
+        self.lightschedule = IndefiniteTimer(10, self.inrangeON)
         self.lightschedulethread = Thread(target = self.lightschedule.start_all)
         self.lightschedulethread.start()
 
@@ -36,30 +36,23 @@ class Mister(Relay):
 
     def onemistingcycle(self):
         self.on()
-        sleep(self.forNsec)
+        for i in range(10*self.forNsec):
+            if self.misterschedule.sentinel:
+                sleep(0.1)
+            else:
+                break
         self.off()
 
-    def scheduledmisting(self):
-        with self.schedulerlock:
-            mistingschedule = schedule.Scheduler()
-            mistingschedule.every(self.everyNmin).minutes.do(self.onemistingcycle)
+    def startscheduledmisting(self, everyNsec = 60, forNsec = 25):
+        assert everyNsec > forNsec, "Time misting must be less than time between misting cycles."
 
-            while 1:
-                mistingschedule.run_pending()
-                sleep(1)
-
-    def startscheduledmisting(self, everyNmin = 1, forNsec = 25):
-        assert type(everyNmin)==int, "Must be a whole integer number of minutes."
-        assert type(forNsec)==int, "Must be a whole integer number of seconds."
-        assert everyNmin*60 >= forNsec, "Time misting must be less than time between misting cycles."
-
-        self.everyNmin = everyNmin
+        self.everyNsec = everyNsec
         self.forNsec = forNsec
 
-        self.schedulerthread = Thread(target = self.scheduledmisting, name="Misting Duty Cycle Thread")
-        self.schedulerlock = Lock()
-
-        self.schedulerthread.start()
+        # everyNsec mist forNsec
+        self.misterschedule = IndefiniteTimer(self.everyNsec, self.onemistingcycle)
+        self.misterschedulethread = Thread(target = self.misterschedule.start_all)
+        self.misterschedulethread.start()
 
 class Fan(Relay):
     def __init__(self, relaystring):
@@ -67,30 +60,23 @@ class Fan(Relay):
 
     def onefancycle(self):
         self.on()
-        sleep(self.forNsec)
+        for i in range(10*self.forNsec):
+            if self.fanschedule.sentinel:
+                sleep(0.1)
+            else:
+                break
         self.off()
 
-    def scheduledfan(self):
-        with self.schedulerlock:
-            fanschedule = schedule.Scheduler()
-            fanschedule.every(self.everyNmin).minutes.do(self.onefancycle)
+    def startscheduledfanning(self, everyNsec = 1, forNsec = 45):
+        assert everyNsec > forNsec, "Time fanning must be less than time between fan cycles."
 
-            while 1:
-                fanschedule.run_pending()
-                sleep(1)
-
-    def startscheduledfanning(self, everyNmin = 1, forNsec = 45):
-        assert type(everyNmin)==int, "Must be a whole integer number of minutes."
-        assert type(forNsec)==int, "Must be a whole integer number of seconds."
-        assert everyNmin*60 >= forNsec, "Time fanning must be less than time between fan cycles."
-
-        self.everyNmin = everyNmin
+        self.everyNsec = everyNsec
         self.forNsec = forNsec
 
-        self.schedulerthread = Thread(target = self.scheduledfan, name="Fan Duty Cycle Thread")
-        self.schedulerlock = Lock()
-
-        self.schedulerthread.start()
+        # everyNsec fan forNsec
+        self.fanschedule = IndefiniteTimer(self.everyNsec, self.onefancycle)
+        self.fanschedulethread = Thread(target = self.fanschedule.start_all)
+        self.fanschedulethread.start()
 
 class Peltier(Relay):
     def __init__(self, relaystring):
