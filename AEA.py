@@ -12,24 +12,41 @@ if __name__ == '__main__':
 
         # init lights
         lights = Lights("RELAY1")
-        lights.inrangestart()
         lights.startscheduledlighting()
 
         # init mister
         mister = Mister("RELAY2")
+        mister.startscheduledmisting()
 
+        # init fan
+        fan = Fan("RELAY3")
+        fan.startscheduledfanning()
+
+        # init peltier
+        peltier = Peltier("RELAY4")
     
     # try and switch things switch off if there are any errors or user shutdown
     except:
         try:
-            lights.lightsoff()
+            lights.off()
         except:
             pass
 
         try:
-            mister.misteroff()
+            mister.off()
         except:
             pass
+
+        try:
+            fan.off()
+        except:
+            pass
+
+        try:
+            peltier.off()
+        except:
+            pass
+
 
 
         
