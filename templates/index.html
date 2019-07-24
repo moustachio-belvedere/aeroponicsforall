@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Aeroponics for All</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/main.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body>
+    <div id="maindiv">
+        <div id="imageshower">
+            <div class="imslid" id="actualimage">
+                <img id="img">
+            </div>
+            <div class="imslid" id="slider">
+                <input id="imslider" type="range" min="0" max="0" value="0" step="1" 
+                oninput="showVal(this.value)" onchange="showVal(this.value)" />
+            </div>
+            <div class="imslid" id="name">
+                <span id="imname">0</span>
+            </div>
+        </div>
+        <script src="/imageshower.js"></script>
+
+        <div id="sensorsplot"></div>
+        <script src="/sensorsplot.js"></script>
+    </div>
+</body>
+
+</html>

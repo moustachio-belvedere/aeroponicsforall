@@ -1,0 +1,25 @@
+body {
+  background: linear-gradient(#abebc6, #27ae60);
+  background-attachment: fixed;
+}
+
+#sensorsplot {
+  width: 90vw;
+  height: 55vw;
+  margin: 0 auto;
+}
+
+#imslider
+{
+    width: 640px;
+}
+
+#maindiv{
+    display: flex;
+}
+#imageshower{
+    width: 680px;
+}
+#sensorsplot{
+    flex-grow: 1;
+}
