@@ -24,6 +24,12 @@ class Lights:
     def timestringparse(self, pt):
         return "{}:{}".format(str(pt[0]).zfill(2), str(pt[0]).zfill(2))
 
+    def lightson(self):
+        self.lights.on()
+
+    def lightsoff(self):
+        self.lights.off()
+
     def scheduledlighting(self):
         with self.schedulerlock:
             ton_parsed = timestringparse(self.ton)
@@ -31,8 +37,8 @@ class Lights:
 
             lightschedule = schedule.Scheduler()
 
-            lightschedule.every().day.at(ton_parsed).do(self.lights.on())
-            lightschedule.every().day.at(toff_parsed).do(self.lights.off())
+            lightschedule.every().day.at(ton_parsed).do(self.lightson())
+            lightschedule.every().day.at(toff_parsed).do(self.lightsoff())
 
             while 1:
                 lightschedule.run_pending()

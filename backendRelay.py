@@ -20,23 +20,23 @@
 #     '''
 #     relaypins = {"RELAY1":15, "RELAY2":13, "RELAY3":11, "RELAY4":7}
 
-    # def __init__(self, relay, device):
-    #     self.pin = self.relaypins[relay]
-    #     self.relay = relay
-    #     GPIO.setup(self.pin, GPIO.OUT)
-    #     GPIO.output(self.pin, GPIO.LOW)
-    #     self.device = device
-    #     print("{} device initialised on {}.".format(self.device, self.relay))
+#     def __init__(self, relay, device):
+#         self.pin = self.relaypins[relay]
+#         self.relay = relay
+#         GPIO.setup(self.pin, GPIO.OUT)
+#         GPIO.output(self.pin, GPIO.LOW)
+#         self.device = device
+#         print("{} device initialised on {}.".format(self.device, self.relay))
 
-    # def on(self):
-    #     GPIO.output(self.pin, GPIO.HIGH)
-    #     self.ison = True
-    #     print("{} connected to {} - ON".format(self.device, self.relay))
+#     def on(self):
+#         GPIO.output(self.pin, GPIO.HIGH)
+#         self.ison = True
+#         print("{} connected to {} - ON".format(self.device, self.relay))
 
-    # def off(self):
-    #     GPIO.output(self.pin, GPIO.LOW)
-    #     self.ison = False
-    #     print("{} connected to {} - OFF".format(self.device, self.relay))
+#     def off(self):
+#         GPIO.output(self.pin, GPIO.LOW)
+#         self.ison = False
+#         print("{} connected to {} - OFF".format(self.device, self.relay))
 #===========================================================================
 
 class Relay:
