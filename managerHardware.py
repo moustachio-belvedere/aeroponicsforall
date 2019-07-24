@@ -1,52 +1,34 @@
 from backendRelay import Relay
-from backendTimerUtils import RepeatedTimer, time_in_range
-from threading import Lock, Thread
+from backendTimerUtils import IndefiniteTimer, time_in_range
+from threading import Thread
 from time import sleep
 import datetime
-import schedule
 
 class Lights(Relay):
     def __init__(self, relaystring):
         super(Lights, self).__init__(relaystring, "Lights")
 
-    def inrangestart(self):
-        ton_parsed = datetime.time(*self.ton)
-        toff_parsed = datetime.time(*self.toff)
-
+    def inrangeON(self):
         timenow = datetime.datetime.now().time()
-
-        if time_in_range(ton_parsed, toff_parsed, timenow):
-            self.on()
+        print("Light function ran at {}".format(timenow))
+        if time_in_range(self.ton, self.toff, timenow):
+            if not self.ison:
+                self.on()
         else:
-            self.off()
+            if self.ison:
+                self.off()
 
     def timestringparse(self, pt):
         return "{}:{}".format(str(pt[0]).zfill(2), str(pt[0]).zfill(2))
 
-    def scheduledlighting(self):
-        with self.schedulerlock:
-            ton_parsed = timestringparse(self.ton)
-            toff_parsed = timestringparse(self.toff)
-
-            lightschedule = schedule.Scheduler()
-
-            lightschedule.every().day.at(ton_parsed).do(self.on)
-            lightschedule.every().day.at(toff_parsed).do(self.off)
-
-            while 1:
-                lightschedule.run_pending()
-                time.sleep(1)
-
     def startscheduledlighting(self, ton = (8, 0), toff = (22, 0)):
-        self.ton = ton
-        self.toff = toff
+        self.ton = datetime.time(*ton)
+        self.toff = datetime.time(*toff)
 
-        self.inrangestart()
-
-        self.schedulerthread = Thread(target = self.scheduledmisting, name="Lighting Scheduler Thread")
-        self.schedulerlock = Lock()
-
-        self.schedulerthread.start()
+        # every sixty seconds, check if in desired time window for lights on
+        self.lightschedule = IndefiniteTimer(2, self.inrangeON)
+        self.lightschedulethread = Thread(target = self.lightschedule.start_all)
+        self.lightschedulethread.start()
 
 class Mister(Relay):
     def __init__(self, relaystring):
@@ -64,7 +46,7 @@ class Mister(Relay):
 
             while 1:
                 mistingschedule.run_pending()
-                time.sleep(1)
+                sleep(1)
 
     def startscheduledmisting(self, everyNmin = 1, forNsec = 25):
         assert type(everyNmin)==int, "Must be a whole integer number of minutes."
@@ -95,7 +77,7 @@ class Fan(Relay):
 
             while 1:
                 fanschedule.run_pending()
-                time.sleep(1)
+                sleep(1)
 
     def startscheduledfanning(self, everyNmin = 1, forNsec = 45):
         assert type(everyNmin)==int, "Must be a whole integer number of minutes."

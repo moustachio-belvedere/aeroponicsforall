@@ -5,7 +5,6 @@ from os import walk, path
 import json
 
 def serverInit(HOST_NAME, PORT_NUMBER):
-
     httpd = HTTPServer((HOST_NAME, PORT_NUMBER), Server)
     print(time.asctime(), 'Server UP - %s:%s' % (HOST_NAME, PORT_NUMBER))
     try:
@@ -14,4 +13,5 @@ def serverInit(HOST_NAME, PORT_NUMBER):
         pass
     httpd.server_close()
     print(time.asctime(), 'Server DOWN - %s:%s' % (HOST_NAME, PORT_NUMBER))
+
     
