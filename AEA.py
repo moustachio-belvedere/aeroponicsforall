@@ -16,12 +16,19 @@ if __name__ == '__main__':
         lights.startscheduledlighting()
 
         # init mister
+        mister = Mister("RELAY2")
+
     
-    # make sure things switch off if there are any errors
+    # try and switch things switch off if there are any errors or user shutdown
     except:
         try:
             lights.lightsoff()
-        except AttributeError:
+        except:
+            pass
+
+        try:
+            mister.misteroff()
+        except:
             pass
 
 
