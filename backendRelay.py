@@ -10,9 +10,6 @@
 import RPi.GPIO as GPIO
 import time
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.setwarnings(False)
-
 class Relay:
     ''' Class to handle Relay
     Arguments:

@@ -5,9 +5,14 @@ from time import sleep, asctime
 from http.server import HTTPServer
 from backendServer import Server
 import json
+import RPi.GPIO as GPIO
 
 if __name__ == '__main__':
     try:
+        # GPIO config
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setwarnings(True)
+
         # init lights
         lights = Lights("RELAY1")
         lights.startscheduledlighting()
@@ -68,6 +73,7 @@ if __name__ == '__main__':
         except:
             pass
 
-
-
-        
+        try:
+            GPIO.cleanup()
+        except:
+            pass 
