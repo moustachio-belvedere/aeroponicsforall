@@ -11,26 +11,27 @@ import json
 if __name__ == '__main__':
     try:
         # init GPIO
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setwarnings(False)
+        gpiomanager = GPIOManager()
 
         # init lights
-        lights = Lights("RELAY1")
+        lights = Lights("RELAY1", gpiomanager)
         lights.startscheduledlighting()
 
         # init mister
-        mister = Mister("RELAY2")
+        mister = Mister("RELAY2", gpiomanager)
         mister.startscheduledmisting(everyNsec = 10, forNsec = 5)
 
         # init fan
-        fan = Fan("RELAY3")
+        fan = Fan("RELAY3", gpiomanager)
         fan.startscheduledfanning(everyNsec = 10, forNsec = 5)
 
         # init peltier
-        peltier = Peltier("RELAY4")
+        peltier = Peltier("RELAY4", gpiomanager)
         
         # init sensors
         sensors = Sensors()
+        sensors.startsensorpoll()
+        sensors.startfilewriterthread()
 
         # start server
         HOST_NAME = 'localhost'
@@ -41,6 +42,7 @@ if __name__ == '__main__':
 
     # try and switch things switch off if there are any errors or user shutdown
     except KeyboardInterrupt:
+        # ADD Sensors close, then LAST CLOSE should be a GPIO cleanup operation.
 
         try:
             lights.lightschedule.sentinel = False
@@ -76,8 +78,15 @@ if __name__ == '__main__':
             print(asctime(), 'Server DOWN - %s:%s' % (HOST_NAME, PORT_NUMBER))
         except:
             pass
+            
+        try:
+            sensors.sentinel = False
+            sensors.filewriterthreadtimer.stop()
+            #~ sensors.lightschedulethread.join()
+        except BaseException as e:
+            print("\n\Sensors off may have failed due to error:\n{}\n".format(e))
 
         try:
-            GPIO.cleanup()
-        except:
-            pass 
+            gpiomanager.powerdown()
+        except BaseException as e: 
+            print("\n\GPIO powerdown may have failed due to error:\n{}\n".format(e))

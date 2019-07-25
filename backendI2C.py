@@ -42,7 +42,7 @@ class Sensors:
 		
 	def sensorpoll(self):
 		with SMBusWrapper(1) as bus:
-			while True:
+			while self.sentinel:
 				readT74, = bus.read_i2c_block_data(self.addressT74, 0, 1)
 				tempbits = format(readT74, '08b')
 				tempBit = Bits(bin=tempbits)
@@ -57,6 +57,7 @@ class Sensors:
 				sleep(0.1)
 
 	def startsensorpoll(self):
+		self.sentinel = True
 		pollthread = Thread(target=self.sensorpoll)
 		pollthread.start()
 		
@@ -64,8 +65,8 @@ class Sensors:
 		print("\nTemp T74: {}\nTemp HON: {}\nHumi HON: {}\n".format(self.T74temp, self.HONtemp, self.HONrelh)) 
 		
 	def startfilewriterthread(self, secondsPerWrite = 2):
-		filewriterthreadtimer = IndefiniteTimer(secondsPerWrite, self.filewritetarget)
-		filewriterthreadtimer.start_all()
+		self.filewriterthreadtimer = IndefiniteTimer(secondsPerWrite, self.filewritetarget)
+		self.filewriterthreadtimer.start_all()
 		
 if __name__=="__main__":
 	sensors = Sensors()
