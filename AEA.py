@@ -4,14 +4,15 @@ from os import walk, path
 from time import sleep, asctime
 from http.server import HTTPServer
 from backendServer import Server
+from backendGPIO import GPIOManager
+from backendI2C import Sensors
 import json
-import RPi.GPIO as GPIO
 
 if __name__ == '__main__':
     try:
-        # GPIO config
+        # init GPIO
         GPIO.setmode(GPIO.BOARD)
-        GPIO.setwarnings(True)
+        GPIO.setwarnings(False)
 
         # init lights
         lights = Lights("RELAY1")
@@ -27,6 +28,9 @@ if __name__ == '__main__':
 
         # init peltier
         peltier = Peltier("RELAY4")
+        
+        # init sensors
+        sensors = Sensors()
 
         # start server
         HOST_NAME = 'localhost'
