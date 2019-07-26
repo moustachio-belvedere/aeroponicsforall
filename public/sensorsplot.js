@@ -8,32 +8,49 @@ tempHON.open("GET", "sensordata/tempHON.json");
 tempHON.responseType = 'json';
 tempHON.send();
 
+let relhHON = new XMLHttpRequest();
+relhHON.open("GET", "sensordata/relhHON.json");
+relhHON.responseType = 'json';
+relhHON.send();
+
 let datim = new XMLHttpRequest();
 datim.open("GET", "sensordata/datim.json");
 datim.responseType = 'json';
 datim.send();
 
-let plotsentinel = true;
+let plotsentinelT = true;
+let plotsentinelH = true;
 
 tempT74.onload = function () {
-  if ((tempT74.readyState == 4) && (tempHON.readyState == 4) && (datim.readyState == 4) && plotsentinel) {
+  if ((tempT74.readyState == 4) && (tempHON.readyState == 4) && (datim.readyState == 4) && plotsentinelT) {
     ploteverything(tempT74.response, tempHON.response, datim.response);
-    plotsentinel = false;
+    plotsentinelT = false;
   }
 };
 
 tempHON.onload = function () {
-  if ((tempT74.readyState == 4) && (tempHON.readyState == 4) && (datim.readyState == 4) && plotsentinel) {
+  if ((tempT74.readyState == 4) && (tempHON.readyState == 4) && (datim.readyState == 4) && plotsentinelT) {
     ploteverything(tempT74.response, tempHON.response, datim.response);
-    plotsentinel = false;
+    plotsentinelT = false;
   }
 };
 
 datim.onload = function () {
-  if ((tempT74.readyState == 4) && (tempHON.readyState == 4) && (datim.readyState == 4) && plotsentinel) {
+  if ((tempT74.readyState == 4) && (tempHON.readyState == 4) && (datim.readyState == 4) && plotsentinelT) {
     ploteverything(tempT74.response, tempHON.response, datim.response);
-    plotsentinel = false;
-    }
+    plotsentinelT = false;
+    };
+  if ((relhHON.readyState == 4) && (datim.readyState == 4) && plotsentinelH) {
+    plothumidity(relhHON.response, datim.response);
+    plotsentinelH = false;
+    }    
+};
+
+relhHON.onload = function () {
+  if ((relhHON.readyState == 4) && (datim.readyState == 4) && plotsentinelH) {
+    plothumidity(relhHON.response, datim.response);
+    plotsentinelH = false;
+  }
 };
 
 function ploteverything(t1, t2, dt){
@@ -78,5 +95,37 @@ function ploteverything(t1, t2, dt){
 
   Plotly.newPlot('sensorsplot', data, layout);
 }
+
+function plothumidity(h1, dt){
+  let t1trace = {
+    x: dt,
+    y: h1,
+    mode: 'lines+markers'
+  };
+
+  let data = [t1trace];
+
+  let layout = {
+    autosize: false,
+    xaxis: {
+      title: 'Date/Time'
+    },
+    yaxis: {
+      title: 'Relative Humidity (%)'
+    },
+    width: 640,
+    height: 480,
+    margin: {
+      l: 40,
+      r: 5,
+      b: 60,
+      t: 20,
+      pad: 0
+    }
+  };
+
+  Plotly.newPlot('humiplot', data, layout);
+}
+
 
 

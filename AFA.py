@@ -13,32 +13,32 @@ def main():
         # populate list of images in case they have been deleted
         populateimagelist()
         
-        #~ # init GPIO
-        #~ gpiomanager = GPIOManager()
+        # init GPIO
+        gpiomanager = GPIOManager()
         
-        #~ # init camera to take picture every 5 seconds
-        #~ camera = Camera(5)
-        #~ camera.start_timed_capture()
+        # init camera to take picture every 5 seconds
+        camera = Camera(5)
+        camera.start_timed_capture()
     
-        #~ # init lights
-        #~ lights = Lights("RELAY1", gpiomanager, camera)
-        #~ lights.startscheduledlighting(ton = (8, 0), toff = (22, 0))
+        # init lights
+        lights = Lights("RELAY1", gpiomanager, camera)
+        lights.startscheduledlighting(ton = (8, 0), toff = (22, 0))
     
-        #~ # init mister
-        #~ mister = Mister("RELAY2", gpiomanager)
-        #~ mister.startscheduledmisting(everyNsec = 10, forNsec = 5)
+        # init mister
+        mister = Mister("RELAY2", gpiomanager)
+        mister.startscheduledmisting(everyNsec = 10, forNsec = 5)
     
-        #~ # init fan
-        #~ fan = Fan("RELAY3", gpiomanager)
-        #~ fan.startscheduledfanning(everyNsec = 10, forNsec = 5)
+        # init fan
+        fan = Fan("RELAY3", gpiomanager)
+        fan.startscheduledfanning(everyNsec = 10, forNsec = 5)
     
-        #~ # init peltier
-        #~ peltier = Peltier("RELAY4", gpiomanager, ontemp = 20, bufferlen = 10)
+        # init peltier
+        peltier = Peltier("RELAY4", gpiomanager, ontemp = 20, bufferlen = 10)
         
-        #~ # init sensors
-        #~ sensors = Sensors(peltier)
-        #~ sensors.startsensorpoll()
-        #~ sensors.startfilewriterthread(secondsPerWrite = 5)
+        # init sensors
+        sensors = Sensors(peltier)
+        sensors.startsensorpoll()
+        sensors.startfilewriterthread(secondsPerWrite = 5)
     
         # start server
         HOST_NAME = 'localhost'

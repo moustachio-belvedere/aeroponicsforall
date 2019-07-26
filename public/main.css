@@ -23,3 +23,6 @@ body {
 #sensorsplot{
     flex-grow: 1;
 }
+#humiplot{
+    flex-grow: 1;
+}
