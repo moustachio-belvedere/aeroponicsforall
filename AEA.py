@@ -1,16 +1,17 @@
-from managerHardware import Lights, Mister, Fan, Peltier
-from threading import Thread
-from os import walk, path
 from time import sleep, asctime
 from http.server import HTTPServer
+from managerHardware import Lights, Mister, Fan, Peltier
 from backendServer import Server
 from backendGPIO import GPIOManager
 from backendI2C import Sensors
 from backendCamera import Camera
-import json
+from backendJSONUtil import populateimagelist
 
 if __name__ == '__main__':
     try:
+        # populate list of images in case they have been deleted
+        populateimagelist()
+        
         # init GPIO
         gpiomanager = GPIOManager()
         

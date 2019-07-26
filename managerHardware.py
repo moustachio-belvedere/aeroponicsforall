@@ -14,13 +14,14 @@ class Lights(Relay):
         timenow = datetime.datetime.now().time()
         # print("Light function ran at {}".format(timenow))
         if time_in_range(self.ton, self.toff, timenow):
+            self.camera.sentinel = True
             if not self.ison:
                 self.on()
-                self.camera.sentinel = True
+                
         else:
+            self.camera.sentinel = False
             if self.ison:
                 self.off()
-                self.camera.sentinel = False
 
     def startscheduledlighting(self, ton = (8, 0), toff = (22, 0)):
         self.ton = datetime.time(*ton)

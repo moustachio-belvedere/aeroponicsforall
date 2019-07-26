@@ -3,6 +3,7 @@ from picamera import PiCamera
 from pathlib import Path
 from threading import Lock, Thread
 from backendTimerUtils import IndefiniteTimer
+from backendJSONUtil import appendtoJSON
 from time import sleep
 
 class Camera(PiCamera):
@@ -20,7 +21,7 @@ class Camera(PiCamera):
 		self.piclock = Lock()
 		
 		# camera sentinel to only take pictures when light is on
-		self.sentinel = True
+		self.sentinel = False
 		
 	def initvar_camerahardware(self):
 		# set default resolution
@@ -46,6 +47,8 @@ class Camera(PiCamera):
 				
 				# use parent method to capture, *bayer and quality only used for JPG formats*
 				super(Camera, self).capture(impath, format='jpeg', use_video_port=False, bayer=False, quality=60)
+				
+				appendtoJSON('public/images_lores/listofimages.json', filename)
 			
 	def start_timed_capture(self):
 		# init timed camera capture 
