@@ -1,8 +1,10 @@
 from time import sleep
 from smbus2 import SMBusWrapper
 from bitstring import Bits
-from threading import Thread
+from threading import Thread, Lock
 from backendTimerUtils import IndefiniteTimer
+from backendJSONUtil import appendtoJSON
+from datetime import datetime
 
 class Sensors:
 	def __init__(self):
@@ -62,9 +64,16 @@ class Sensors:
 		pollthread.start()
 		
 	def filewritetarget(self):
+		with self.filewritelock:
+			appendtoJSON('public/sensordata/datim.json', '{timestamp:%Y-%m-%d} {timestamp:%H:%M:%S}'.format(timestamp=datetime.now()))
+			appendtoJSON('public/sensordata/tempT74.json', self.T74temp)
+			appendtoJSON('public/sensordata/tempHON.json', self.HONtemp)
+			appendtoJSON('public/sensordata/relhHON.json', self.HONrelh)
+			
 		print("\nTemp T74: {}\nTemp HON: {}\nHumi HON: {}\n".format(self.T74temp, self.HONtemp, self.HONrelh)) 
 		
-	def startfilewriterthread(self, secondsPerWrite = 2):
+	def startfilewriterthread(self, secondsPerWrite = 5):
+		self.filewritelock = Lock()
 		self.filewriterthreadtimer = IndefiniteTimer(secondsPerWrite, self.filewritetarget)
 		self.filewriterthreadtimer.start_all()
 		
