@@ -11,14 +11,14 @@ xhr.onload = function () {
     document.getElementById("imslider").max = imagecount - 1;
     document.getElementById("imslider").value = imagecount - 1;
 
-    document.getElementById("imname").innerHTML = imagenames[imagecount - 1].slice(5, 20)
+    document.getElementById("imname").innerHTML = imagenames[imagecount - 1].slice(0, 15)
     document.getElementById("img").src = "images_lores/" + imagenames[imagecount - 1]
 };
 
 function showVal(newVal){
     if (xhr.readyState == 4){
         let imagenames = xhr.response;
-        document.getElementById("imname").innerHTML = imagenames[newVal].slice(5, 20)
+        document.getElementById("imname").innerHTML = imagenames[newVal].slice(0, 15)
         document.getElementById("img").src = "images_lores/" + imagenames[newVal]
     }
 }

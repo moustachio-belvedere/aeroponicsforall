@@ -2,6 +2,7 @@ from backendRelay import Relay
 from backendTimerUtils import IndefiniteTimer, time_in_range
 from threading import Thread
 from time import sleep
+from statistics import mean
 import datetime
 
 class Lights(Relay):
@@ -81,6 +82,25 @@ class Fan(Relay):
         self.fanschedulethread.start()
 
 class Peltier(Relay):
-    def __init__(self, relaystring, gpiomanager):
+    def __init__(self, relaystring, gpiomanager, ontemp = 20, bufferlen = 10):
         super(Peltier, self).__init__(relaystring, "Peltier", gpiomanager)
+        
+        self.bufferlen = bufferlen
+        self.bufferindex = 0
+        self.circlebuffer = [0]*self.bufferlen
+        
+        self.ontemp = ontemp
+        
+    def updatefromtemp(rtemp):
+        self.circlebuffer[self.bufferindex%self.bufferlen] = rtemp
+        self.bufferindex += 1
+        
+        if mean(self.circlebuffer) > self.ontemp:
+            self.on()
+        else:
+            self.off
+        
+        
+
+
 

@@ -7,13 +7,15 @@ from backendJSONUtil import appendtoJSON
 from datetime import datetime
 
 class Sensors:
-	def __init__(self):
+	def __init__(self, peltier):
 		self.addressT74 = 0x4d # temp sensor address
 		self.addressHON = 0x27 # honeywell address
 		
 		self.HONtemp = 0.0
 		self.HONrelh = 0.0
 		self.T74temp = 0.0
+		
+		self.peltier = peltier
 		
 	def __getstatus(self, h1s):
 		h1sB = format(h1s, '08b')
@@ -69,7 +71,9 @@ class Sensors:
 			appendtoJSON('public/sensordata/tempT74.json', self.T74temp)
 			appendtoJSON('public/sensordata/tempHON.json', self.HONtemp)
 			appendtoJSON('public/sensordata/relhHON.json', self.HONrelh)
-			
+		
+		self.peltier.updatefromtemp(self.T74temp)
+		
 		print("\nTemp T74: {}\nTemp HON: {}\nHumi HON: {}\n".format(self.T74temp, self.HONtemp, self.HONrelh)) 
 		
 	def startfilewriterthread(self, secondsPerWrite = 5):

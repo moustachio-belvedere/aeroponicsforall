@@ -1,4 +1,5 @@
 from time import sleep, asctime
+from sys import argv
 from http.server import HTTPServer
 from managerHardware import Lights, Mister, Fan, Peltier
 from backendServer import Server
@@ -12,16 +13,16 @@ def main():
         # populate list of images in case they have been deleted
         populateimagelist()
         
-        # init GPIO
-        gpiomanager = GPIOManager()
+        #~ # init GPIO
+        #~ gpiomanager = GPIOManager()
         
-        # init camera to take picture every 5 seconds
-        camera = Camera(5)
-        camera.start_timed_capture()
+        #~ # init camera to take picture every 5 seconds
+        #~ camera = Camera(5)
+        #~ camera.start_timed_capture()
     
-        # init lights
-        lights = Lights("RELAY1", gpiomanager, camera)
-        lights.startscheduledlighting(ton = (8, 0), toff = (22, 0))
+        #~ # init lights
+        #~ lights = Lights("RELAY1", gpiomanager, camera)
+        #~ lights.startscheduledlighting(ton = (8, 0), toff = (22, 0))
     
         #~ # init mister
         #~ mister = Mister("RELAY2", gpiomanager)
@@ -32,12 +33,12 @@ def main():
         #~ fan.startscheduledfanning(everyNsec = 10, forNsec = 5)
     
         #~ # init peltier
-        #~ peltier = Peltier("RELAY4", gpiomanager)
+        #~ peltier = Peltier("RELAY4", gpiomanager, ontemp = 20, bufferlen = 10)
         
         #~ # init sensors
-        #~ sensors = Sensors()
+        #~ sensors = Sensors(peltier)
         #~ sensors.startsensorpoll()
-        #~ sensors.startfilewriterthread()
+        #~ sensors.startfilewriterthread(secondsPerWrite = 5)
     
         # start server
         HOST_NAME = 'localhost'
@@ -101,9 +102,13 @@ def main():
             print("\n\GPIO powerdown may have failed due to error:\n{}\n".format(e))
 
 def cleanup():
-    # if user passes "cleanup" as argument argv to running then
+    # if user passes "cleardata" as argument argv to running then
     # deletes all picture and sensor data
     pass
 
 if __name__ == '__main__':
-    main()
+    if len(argv)==2 and argv[1]=="cleardata":
+        cleanup()
+    else:
+        main()
+

@@ -1,12 +1,12 @@
-let temp1 = new XMLHttpRequest();
-temp1.open("GET", "sensordata/temp1.json");
-temp1.responseType = 'json';
-temp1.send();
+let tempT74 = new XMLHttpRequest();
+tempT74.open("GET", "sensordata/tempT74.json");
+tempT74.responseType = 'json';
+tempT74.send();
 
-let temp2 = new XMLHttpRequest();
-temp2.open("GET", "sensordata/temp2.json");
-temp2.responseType = 'json';
-temp2.send();
+let tempHON = new XMLHttpRequest();
+tempHON.open("GET", "sensordata/tempHON.json");
+tempHON.responseType = 'json';
+tempHON.send();
 
 let datim = new XMLHttpRequest();
 datim.open("GET", "sensordata/datim.json");
@@ -15,23 +15,23 @@ datim.send();
 
 let plotsentinel = true;
 
-temp1.onload = function () {
-  if ((temp1.readyState == 4) && (temp2.readyState == 4) && (datim.readyState == 4) && plotsentinel) {
-    ploteverything(temp1.response, temp2.response, datim.response);
+tempT74.onload = function () {
+  if ((tempT74.readyState == 4) && (tempHON.readyState == 4) && (datim.readyState == 4) && plotsentinel) {
+    ploteverything(tempT74.response, tempHON.response, datim.response);
     plotsentinel = false;
   }
 };
 
-temp2.onload = function () {
-  if ((temp1.readyState == 4) && (temp2.readyState == 4) && (datim.readyState == 4) && plotsentinel) {
-    ploteverything(temp1.response, temp2.response, datim.response);
+tempHON.onload = function () {
+  if ((tempT74.readyState == 4) && (tempHON.readyState == 4) && (datim.readyState == 4) && plotsentinel) {
+    ploteverything(tempT74.response, tempHON.response, datim.response);
     plotsentinel = false;
   }
 };
 
 datim.onload = function () {
-  if ((temp1.readyState == 4) && (temp2.readyState == 4) && (datim.readyState == 4) && plotsentinel) {
-    ploteverything(temp1.response, temp2.response, datim.response);
+  if ((tempT74.readyState == 4) && (tempHON.readyState == 4) && (datim.readyState == 4) && plotsentinel) {
+    ploteverything(tempT74.response, tempHON.response, datim.response);
     plotsentinel = false;
     }
 };
@@ -40,21 +40,21 @@ function ploteverything(t1, t2, dt){
   let t1trace = {
     x: dt,
     y: t1,
-    name: 'Sensor 1',
+    name: 'T74',
     mode: 'lines+markers'
   };
 
   let t2trace = {
     x: dt,
     y: t2,
-    name: 'Sensor 2',
+    name: 'HON',
     mode: 'lines+markers'
   };
 
   let data = [t1trace, t2trace];
 
   let layout = {
-    title: 'Sensor Temperatures',
+    autosize: false,
     xaxis: {
       title: 'Date/Time'
     },
@@ -62,7 +62,18 @@ function ploteverything(t1, t2, dt){
       title: 'Temperature (degrees celsius)'
     },
     width: 640,
-    height: 480
+    height: 480,
+    margin: {
+      l: 40,
+      r: 5,
+      b: 60,
+      t: 20,
+      pad: 0
+    },
+    legend: {
+    x: 0.05,
+    y: 1
+    }
   };
 
   Plotly.newPlot('sensorsplot', data, layout);
