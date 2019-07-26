@@ -6,32 +6,37 @@ from http.server import HTTPServer
 from backendServer import Server
 from backendGPIO import GPIOManager
 from backendI2C import Sensors
+from backendCamera import Camera
 import json
 
 if __name__ == '__main__':
     try:
         # init GPIO
         gpiomanager = GPIOManager()
+        
+        # init camera to take picture every 5 seconds
+        camera = Camera(5)
+        camera.start_timed_capture()
 
         # init lights
-        lights = Lights("RELAY1", gpiomanager)
-        lights.startscheduledlighting()
+        lights = Lights("RELAY1", gpiomanager, camera)
+        lights.startscheduledlighting(ton = (8, 0), toff = (22, 0))
 
-        # init mister
-        mister = Mister("RELAY2", gpiomanager)
-        mister.startscheduledmisting(everyNsec = 10, forNsec = 5)
+        #~ # init mister
+        #~ mister = Mister("RELAY2", gpiomanager)
+        #~ mister.startscheduledmisting(everyNsec = 10, forNsec = 5)
 
-        # init fan
-        fan = Fan("RELAY3", gpiomanager)
-        fan.startscheduledfanning(everyNsec = 10, forNsec = 5)
+        #~ # init fan
+        #~ fan = Fan("RELAY3", gpiomanager)
+        #~ fan.startscheduledfanning(everyNsec = 10, forNsec = 5)
 
-        # init peltier
-        peltier = Peltier("RELAY4", gpiomanager)
+        #~ # init peltier
+        #~ peltier = Peltier("RELAY4", gpiomanager)
         
-        # init sensors
-        sensors = Sensors()
-        sensors.startsensorpoll()
-        sensors.startfilewriterthread()
+        #~ # init sensors
+        #~ sensors = Sensors()
+        #~ sensors.startsensorpoll()
+        #~ sensors.startfilewriterthread()
 
         # start server
         HOST_NAME = 'localhost'
@@ -42,7 +47,10 @@ if __name__ == '__main__':
 
     # try and switch things switch off if there are any errors or user shutdown
     except KeyboardInterrupt:
-        # ADD Sensors close, then LAST CLOSE should be a GPIO cleanup operation.
+        try:
+            camera.stop_timed_capture()
+        except BaseException as e:
+            print("\n\Camera off may have failed due to error:\n{}\n".format(e))
 
         try:
             lights.lightschedule.sentinel = False

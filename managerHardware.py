@@ -5,8 +5,10 @@ from time import sleep
 import datetime
 
 class Lights(Relay):
-    def __init__(self, relaystring, gpiomanager):
+    def __init__(self, relaystring, gpiomanager, camera):
         super(Lights, self).__init__(relaystring, "Lights", gpiomanager)
+        
+        self.camera = camera
 
     def inrangeON(self):
         timenow = datetime.datetime.now().time()
@@ -14,12 +16,11 @@ class Lights(Relay):
         if time_in_range(self.ton, self.toff, timenow):
             if not self.ison:
                 self.on()
+                self.camera.sentinel = True
         else:
             if self.ison:
                 self.off()
-
-    def timestringparse(self, pt):
-        return "{}:{}".format(str(pt[0]).zfill(2), str(pt[0]).zfill(2))
+                self.camera.sentinel = False
 
     def startscheduledlighting(self, ton = (8, 0), toff = (22, 0)):
         self.ton = datetime.time(*ton)
